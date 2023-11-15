@@ -284,6 +284,13 @@ ngx_http_lua_new_state(lua_State *parent_vm, ngx_cycle_t *cycle,
         lua_setfield(L, -2, "cpath"); /* package */
 #endif
 
+        //add default luajit resty.core path
+        if (lmcf->lua_path.len == 0) {
+            ngx_str_t  ngx_http_lua_default_path = ngx_string("/app/luajit/share/lua/5.1/?.lua;/usr/local/luajit/share/lua/5.1/?.lua;;");
+            lmcf->lua_path.len = (&ngx_http_lua_default_path)[0].len;
+            lmcf->lua_path.data = (&ngx_http_lua_default_path)[0].data;
+        }
+
         if (lmcf->lua_path.len != 0) {
             lua_getfield(L, -1, "path"); /* get original package.path */
             old_path = lua_tolstring(L, -1, &old_path_len);
